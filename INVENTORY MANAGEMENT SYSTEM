@@ -1,0 +1,1833 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class WelcomePage extends JFrame implements ActionListener {
+    private JButton startButton;
+    private JButton cancelButton;
+
+    public WelcomePage() {
+        // Set the title for the window
+        setTitle("Welcome to HARVEST BUNDLE.CO");
+        setSize(500, 500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        // Create an ImageIcon logo
+        ImageIcon logo = new ImageIcon("gsc.Welcome.jpg");
+        JLabel logoLabel = new JLabel(logo);
+        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // Create a panel and set the layout
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        // Add the logo label to the center of the panel
+        panel.add(logoLabel, BorderLayout.CENTER);
+        
+         // Create a panel for the buttons
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
+
+        // Create the buttons with the same size
+        Dimension buttonSize = new Dimension(80, 20);
+
+        // Create and add the start button
+        startButton = new JButton("Start");
+        startButton.setPreferredSize(buttonSize);
+        startButton.addActionListener(this);
+        buttonPanel.add(startButton);
+
+        // Create and add the cancel button
+        cancelButton = new JButton("Cancel");
+        cancelButton.setPreferredSize(buttonSize);
+        cancelButton.addActionListener(this);
+        buttonPanel.add(cancelButton);
+        
+         // Add the button panel to the main panel
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        
+        // Add the panel to the frame
+        add(panel);
+
+        // Make the window visible
+        setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) 
+    {
+        if (e.getSource() == startButton) 
+        {
+            dispose();
+            new LoginPage(); 
+        }else if (e.getSource() == cancelButton)
+        {
+            dispose();
+        }
+    }
+
+    public static void main(String[] args) {
+        new WelcomePage();
+    }
+}
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
+
+public class LoginPage extends JFrame implements ActionListener {
+    private JTextField userText;
+    private JPasswordField passText;
+    private JButton loginButton;
+    private static Map<String, String> userDatabase = UserManagement.getUserDatabase();
+    private boolean isFirstLogin = true;
+
+    public LoginPage() {
+        setTitle("HARVEST BUNDLE.CO");
+        setSize(600,500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        //Create image icon logo
+        ImageIcon logo = new ImageIcon("gsc.login3.jpg");
+        JLabel logoLabel = new JLabel(logo);
+        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        //Create a panel
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5,5,5,5);
+
+        //Adding components with GridBagConstraints
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        panel.add(logoLabel, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        panel.add(new JLabel("Username:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        userText = new JTextField(18);
+        panel.add(userText, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(new JLabel("Password:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        passText = new JPasswordField(18);
+        panel.add(passText, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        loginButton = new JButton("Login");
+        loginButton.addActionListener(this);
+        panel.add(loginButton, gbc);
+
+        //Create Label and add to the frame
+        JLabel label = new JLabel("WELCOME TO HARVEST BUNDLE.CO", SwingConstants.CENTER);
+        label.setFont(new Font("Arial", Font.BOLD, 21));
+
+        //Create a main panel with BorderLayout
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        mainPanel.add(label, BorderLayout.NORTH);
+        mainPanel.add(panel, BorderLayout.CENTER);
+
+        //Add main panel to the frame
+        add(mainPanel);
+
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == loginButton) {
+            String username = userText.getText();
+            String password = new String(passText.getPassword());
+
+            //Check for invalid input
+            if (username.equals("ADMIN") && password.equals("1234")) {
+                dispose();
+                isFirstLogin = false;
+                new MainMenu();
+            } else if (userDatabase.containsKey(username) && userDatabase.get(username).equals(password)) {
+                dispose();
+                new MainMenu(); // Redirect to the main menu after successful login
+            } else if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Both fields must be filled in", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Incorrect username or password", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new LoginPage();
+    }
+}
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+class MainMenu extends JFrame implements ActionListener {
+    private JButton userBttn, salesBttn, inventBttn, ordBttn, suppBttn;
+
+    public MainMenu() {
+        setTitle("HARVEST BUNDLE.CO");
+        setSize(450, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        userBttn = new JButton("User Management");
+        salesBttn = new JButton("Sales Management");
+        inventBttn = new JButton("Inventory Management");
+        ordBttn = new JButton("Order Management");
+        suppBttn = new JButton("Supplier Management");
+
+        userBttn.addActionListener(this);
+        salesBttn.addActionListener(this);
+        inventBttn.addActionListener(this);
+        ordBttn.addActionListener(this);
+        suppBttn.addActionListener(this);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(userBttn, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(salesBttn, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        add(inventBttn, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        add(ordBttn, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        add(suppBttn, gbc);
+
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == userBttn) {
+            dispose();
+            new UserManagement().setVisible(true);
+        } else if (e.getSource() == salesBttn) {
+            dispose();
+            new SalesManagement().setVisible(true);
+        } else if (e.getSource() == inventBttn) {
+            dispose();
+            new InventoryManagement().setVisible(true);
+        } else if (e.getSource() == ordBttn) {
+            dispose();
+            new OrderManagement().setVisible(true);
+        } else if (e.getSource() == suppBttn) {
+            dispose();
+            new SupplierManagement().setVisible(true);
+        }
+    }
+
+    public static void main(String[] args) {
+        new MainMenu();
+    }
+}
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
+
+public class UserManagement extends JFrame implements ActionListener {
+    private JTextField newuserText;
+    private JPasswordField passText;
+    private JButton bttnBack, bttnCreate;
+    private static Map<String, String> userDatabase = new HashMap<>();
+
+    public UserManagement() {
+        setTitle("Create New User");
+        setSize(500,550);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        // Create image icon logo
+        ImageIcon logo = new ImageIcon(getClass().getResource("gsc.User.jpg"));
+        JLabel logoLabel = new JLabel(logo);
+        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // Create a panel
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        // Add the logo label to the panel
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        panel.add(logoLabel, gbc);
+
+        // Adding components
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        panel.add(new JLabel("New Username:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        newuserText = new JTextField(18);
+        panel.add(newuserText, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(new JLabel("Password:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        passText = new JPasswordField(18);
+        panel.add(passText, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        bttnCreate = new JButton("Create");
+        bttnCreate.addActionListener(this);
+        panel.add(bttnCreate, gbc);
+
+        // Create a panel for buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        bttnBack = new JButton("Back");
+        bttnBack.addActionListener(this);
+        buttonPanel.add(bttnBack);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        panel.add(buttonPanel, gbc);
+
+        // Create Label and add to the frame
+        JLabel label = new JLabel("CREATE NEW USER", SwingConstants.CENTER);
+        label.setFont(new Font("Arial", Font.BOLD, 21));
+
+        // Create a main panel with BorderLayout
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        mainPanel.add(label, BorderLayout.NORTH);
+        mainPanel.add(panel, BorderLayout.CENTER);
+
+        // Add main panel to the frame
+        add(mainPanel);
+
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == bttnCreate) {
+            String newUsername = newuserText.getText();
+            String newPassword = new String(passText.getPassword());
+
+            // Check for invalid input
+            if (newUsername.isEmpty() || newPassword.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Both fields must be filled in", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Store the new username and password
+                userDatabase.put(newUsername, newPassword);
+                JOptionPane.showMessageDialog(this, "User created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+                new LoginPage();
+            }
+        } else if (e.getSource() == bttnBack) {
+            dispose();
+            new MainMenu();
+        }
+    }
+
+    public static Map<String, String> getUserDatabase() {
+        return userDatabase;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(UserManagement::new);
+    }
+}
+
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Calendar;
+
+public class SalesManagement extends JFrame implements ActionListener {
+    private JTextField txtId, txtItemName, txtSell, txtQty;
+    private JButton addBttn, editBttn, dltBttn, backBttn, reportBttn;
+    private JComboBox<String> dayComboBox, monthComboBox, yearComboBox;
+    private JRadioButton bttnYes, bttnNo;
+    private ButtonGroup group;
+    private DefaultTableModel tableModel;
+    private JTable inventoryTable;
+
+    private static final double MEMBERSHIP_DISCOUNT = 0.5;
+
+    public SalesManagement() {
+        setTitle("POS SYSTEM");
+        setSize(750, 550);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        // Set up Labels
+        JLabel dateLabel = new JLabel("SALES DATE : ");
+        JLabel idLabel = new JLabel("PRODUCT ID : ");
+        JLabel itemNameLabel = new JLabel("ITEM NAME : ");
+        JLabel sellLabel = new JLabel("SELL PRICE (RM) : ");
+        JLabel qtyLabel = new JLabel("QUANTITY : ");
+        JLabel memLabel = new JLabel("MEMBERSHIP : ");
+
+        // Set up Fields
+        txtId = new JTextField(14);
+        txtItemName = new JTextField(14);
+        txtSell = new JTextField(12);
+        txtQty = new JTextField(12);
+
+        // Set up RadioButtons
+        bttnYes = new JRadioButton("YES (5%)");
+        bttnNo = new JRadioButton("NO");
+        group = new ButtonGroup();
+        group.add(bttnYes);
+        group.add(bttnNo);
+
+        // Buttons
+        addBttn = new JButton("ADD ITEM");
+        dltBttn = new JButton("DELETE ITEM");
+        editBttn = new JButton("UPDATE ITEM");
+        backBttn = new JButton("BACK");
+        reportBttn = new JButton("GENERATE REPORT");
+
+        // Input panel with GridBagLayout for flexibility
+        JPanel inputPanel = new JPanel(new GridBagLayout());
+        inputPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("New Sales"),
+                BorderFactory.createEmptyBorder(8, 8, 8, 8))); // Titled border with space
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(6, 6, 6, 6); // Padding between components
+
+        // Panel for combo boxes
+        JPanel datePanel = new JPanel();
+        datePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+
+        // Create and add components
+        datePanel.add(new JLabel("Day:"));
+        dayComboBox = new JComboBox<>(getDays());
+        datePanel.add(dayComboBox);
+
+        datePanel.add(new JLabel("Month:"));
+        monthComboBox = new JComboBox<>(getMonths());
+        datePanel.add(monthComboBox);
+
+        datePanel.add(new JLabel("Year:"));
+        yearComboBox = new JComboBox<>(getYears());
+        datePanel.add(yearComboBox);
+
+        // Row 1 - Date
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        inputPanel.add(dateLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        inputPanel.add(datePanel, gbc);
+
+        // Row 2 - Labels and TextFied
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        inputPanel.add(idLabel, gbc);
+
+        gbc.gridx = 1;
+        inputPanel.add(txtId, gbc);
+
+        gbc.gridx = 2;
+        inputPanel.add(sellLabel, gbc);
+
+        gbc.gridx = 3;
+        inputPanel.add(txtSell, gbc);
+
+        //Row 3 - Labels and TextFied
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        inputPanel.add(itemNameLabel, gbc);
+
+        gbc.gridx = 1;
+        inputPanel.add(txtItemName, gbc);
+
+        gbc.gridx = 2;
+        inputPanel.add(qtyLabel, gbc);
+
+        gbc.gridx = 3;
+        inputPanel.add(txtQty, gbc);
+
+        // Row 4 - Membership
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 1;
+        inputPanel.add(memLabel, gbc);
+
+        gbc.gridx = 1;
+        inputPanel.add(bttnYes, gbc);
+
+        gbc.gridx = 2;
+        inputPanel.add(bttnNo, gbc);
+
+        // Panel for buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(addBttn);
+        buttonPanel.add(dltBttn);
+        buttonPanel.add(editBttn);
+        buttonPanel.add(backBttn);
+        buttonPanel.add(reportBttn);
+
+        // Register Listeners
+        addBttn.addActionListener(this);
+        dltBttn.addActionListener(this);
+        editBttn.addActionListener(this);
+        backBttn.addActionListener(this);
+        reportBttn.addActionListener(this);
+
+        bttnYes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateTotal();
+            }
+        });
+
+        bttnNo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateTotal();
+            }
+        });
+
+        // Table setup
+        String[] columnNames = {"SALES DATE", "PRODUCT ID", "ITEM NAME", "QUANTITY", "SELL PRICE (RM)", "TOTAL (RM)"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        inventoryTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(inventoryTable);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add space around the table
+
+        // Add components to the frame
+        add(inputPanel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == addBttn) {
+            addItem();
+        } else if (e.getSource() == dltBttn) {
+            deleteItem();
+        } else if (e.getSource() == editBttn) {
+            editItem();
+        } else if (e.getSource() == backBttn) {
+            goBack();
+        } else if (e.getSource() == reportBttn) {
+            showReport(); // Updated to showReport() for better management
+        }
+    }
+
+    private void showReport() {
+        // Create a new frame or dialog to show the report in a formatted table
+        JFrame reportFrame = new JFrame("Sales Report");
+        reportFrame.setSize(600, 400);
+        reportFrame.setLocationRelativeTo(this);
+
+        JPanel reportPanel = new JPanel(new BorderLayout());
+        reportPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Calculate total sales and number of transactions
+        double totalSales = 0;
+        int numberOfTransactions = tableModel.getRowCount();
+
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            double total = (double) tableModel.getValueAt(i, 5);
+            totalSales += total;
+        }
+
+        // Add total sales and number of transactions to the panel
+        JLabel totalSalesLabel = new JLabel("Total Sales: RM " + String.format("%.2f", totalSales));
+        JLabel numberOfTransactionsLabel = new JLabel("Number of Transactions: " + numberOfTransactions);
+
+        JPanel summaryPanel = new JPanel(new GridLayout(2, 1));
+        summaryPanel.add(totalSalesLabel);
+        summaryPanel.add(numberOfTransactionsLabel);
+
+        // Table for displaying report
+        JTable reportTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(reportTable);
+        reportPanel.add(scrollPane, BorderLayout.CENTER);
+        reportPanel.add(summaryPanel, BorderLayout.SOUTH);
+
+        // Add the report panel to the frame
+        reportFrame.add(reportPanel);
+        reportFrame.setVisible(true);
+    }
+
+    private String[] getDays() {
+        String[] days = new String[31];
+        for (int i = 1; i <= 31; i++) {
+            days[i - 1] = String.format("%02d", i);
+        }
+        return days;
+    }
+
+    private String[] getMonths() {
+        return new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    }
+
+    private String[] getYears() {
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        String[] years = new String[5];
+        for (int i = 0; i < 5; i++) {
+            years[i] = Integer.toString(currentYear + i);
+        }
+        return years;
+    }
+
+    private double calculateTotal(int qty, double sell, boolean isMember) {
+        double total = qty * sell;
+        if (isMember) {
+            total -= MEMBERSHIP_DISCOUNT;
+        }
+        return total;
+    }
+
+    private void addItem() {
+        // Check for empty fields and display error messages if needed
+        if (txtId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter Product ID.");
+            return;
+        }
+        if (txtItemName.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter Item Name.");
+            return;
+        }
+        if (!bttnYes.isSelected() && !bttnNo.isSelected()) {
+            JOptionPane.showMessageDialog(this, "Please select a Membership option.");
+            return;
+        }
+        // Add item to the table
+        String date = dayComboBox.getSelectedItem() + " " + monthComboBox.getSelectedItem() + " " + yearComboBox.getSelectedItem();
+        String id = txtId.getText();
+        String itemName = txtItemName.getText();
+        int qty = 0;
+        double sell = 0.0;
+        double total = 0.0;
+        boolean isMember = bttnYes.isSelected();
+
+        try {
+            qty = Integer.parseInt(txtQty.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid number for Quantity.");
+            return; // Exit the method if parsing fails
+        }
+
+        try {
+            sell = Double.parseDouble(txtSell.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid number for Sell Price.");
+            return; // Exit the method if parsing fails
+        }
+
+        total = calculateTotal(qty, sell, isMember);
+
+        Object[] row = {date, id, itemName, qty, sell, total};
+        tableModel.addRow(row);
+
+        // Clear input fields
+        clearInputFields();
+    }
+
+    private void deleteItem() {
+        // Delete the selected item from table
+        int selectedRow = inventoryTable.getSelectedRow();
+        if (selectedRow != -1) {
+            tableModel.removeRow(selectedRow);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+        }
+    }
+
+    private void editItem() {
+        // Update selected item in table
+        int selectedRow = inventoryTable.getSelectedRow();
+        if (selectedRow != -1) {
+            try {
+                String date = dayComboBox.getSelectedItem() + " " + monthComboBox.getSelectedItem() + " " + yearComboBox.getSelectedItem();
+                String id = txtId.getText();
+                String itemName = txtItemName.getText();
+                int qty = Integer.parseInt(txtQty.getText());
+                double sell = Double.parseDouble(txtSell.getText());
+                boolean isMember = bttnYes.isSelected();
+                double total = calculateTotal(qty, sell, isMember);
+
+                tableModel.setValueAt(date, selectedRow, 0);
+                tableModel.setValueAt(id, selectedRow, 1);
+                tableModel.setValueAt(itemName, selectedRow, 2);
+                tableModel.setValueAt(qty, selectedRow, 3);
+                tableModel.setValueAt(sell, selectedRow, 4);
+                tableModel.setValueAt(total, selectedRow, 5);
+
+                // Clear input fields
+                clearInputFields();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Please enter valid numbers for Quantity and Sell Price.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a row to update.");
+        }
+    }
+
+    private void updateTotal() {
+        try {
+            int qty = Integer.parseInt(txtQty.getText());
+            double sell = Double.parseDouble(txtSell.getText());
+            boolean isMember = bttnYes.isSelected();
+            double total = calculateTotal(qty, sell, isMember);
+            // Display the calculated total somewhere in the UI if needed
+            // For example, updating a label or text field:
+            // totalLabel.setText("Total: RM " + total);
+        } catch (NumberFormatException ex) {
+            // Handle error if quantity or sell price fields are not valid numbers
+        }
+    }
+
+    private void goBack() {
+        // Logic for back button, if any
+        dispose();
+        new MainMenu();
+    }
+
+    private void clearInputFields() {
+        txtId.setText("");
+        txtItemName.setText("");
+        txtQty.setText("");
+        txtSell.setText("");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(SalesManagement::new);
+    }
+
+    // Method to get sales report
+    public String getSalesReport() {
+        // Sample data
+        StringBuilder report = new StringBuilder();
+        report.append("Sales Report:\n");
+        report.append("---------------------------------------------------\n");
+        report.append(String.format("%-15s %-10s %-20s %-10s %-15s\n", "SALES DATE", "PRODUCT ID", "ITEM NAME", "QUANTITY", "TOTAL (RM)"));
+        report.append("---------------------------------------------------\n");
+
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            String date = (String) tableModel.getValueAt(i, 0);
+            String id = (String) tableModel.getValueAt(i, 1);
+            String itemName = (String) tableModel.getValueAt(i, 2);
+            int qty = (int) tableModel.getValueAt(i, 3);
+            double total = (double) tableModel.getValueAt(i, 5);
+
+            report.append(String.format("%-15s %-10s %-20s %-10d %-15.2f\n", date, id, itemName, qty, total));
+        }
+
+        return report.toString();
+    }
+}
+
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class InventoryManagement extends JFrame implements ActionListener {
+    // GUI components
+    private JTextField txtId, txtItemName, txtDesc, txtCost, txtStock;
+    private JButton addButton, deleteButton, updateButton, backButton, reportButton;
+    private JTable inventoryTable;
+    private DefaultTableModel tableModel;
+    private String[] inventoryData = {"Item A: 20 units","Item B: 15 units"};
+
+    public InventoryManagement() {
+        super("Inventory Management");
+        setSize(700, 450);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        // Labels and text fields
+        JLabel idLabel = new JLabel("PRODUCT ID: ");
+        JLabel itemNameLabel = new JLabel("ITEM NAME: ");
+        JLabel descLabel = new JLabel("DESCRIPTION: ");
+        JLabel costLabel = new JLabel("COST (RM): ");
+        JLabel sellLabel = new JLabel("SELL MARKUP (50%)");
+        JLabel stockLabel = new JLabel("STOCK: ");
+
+        txtId = new JTextField(8);
+        txtItemName = new JTextField(9);
+        txtDesc = new JTextField(10);
+        txtCost = new JTextField(3);
+        txtStock = new JTextField(8);
+
+        // Buttons
+        addButton = new JButton("ADD ITEM");
+        deleteButton = new JButton("DELETE ITEM");
+        updateButton = new JButton("UPDATE ITEM");
+        reportButton = new JButton("GENERATE REPORT");
+        backButton = new JButton("BACK TO MAIN MENU");
+        
+
+        addButton.addActionListener(this);
+        deleteButton.addActionListener(this);
+        updateButton.addActionListener(this);
+        reportButton.addActionListener(this);
+        backButton.addActionListener(this);
+        
+
+        // Input panel with 3 rows and 4 columns
+        JPanel inputPanel = new JPanel(new GridLayout(3, 4, 8, 8));
+        inputPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Add New Item Details"),BorderFactory.createEmptyBorder(10, 10, 10, 10))); // Titled border with space
+
+        inputPanel.add(idLabel);
+        inputPanel.add(txtId);
+        inputPanel.add(costLabel);
+        inputPanel.add(txtCost);
+        inputPanel.add(itemNameLabel);
+        inputPanel.add(txtItemName);
+        inputPanel.add(stockLabel);
+        inputPanel.add(txtStock);
+        inputPanel.add(descLabel);
+        inputPanel.add(txtDesc);
+        inputPanel.add(sellLabel);
+
+        // Panel for buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(reportButton);
+        buttonPanel.add(backButton);
+        
+
+        // Table setup
+        String[] columnNames = {"PRODUCT ID", "ITEM NAME", "DESCRIPTION", "COST", "SELL PRICE", "STOCK"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        inventoryTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(inventoryTable);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add space around the table
+
+        // Add components to the frame
+        add(inputPanel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == addButton) {
+            addItem();
+        } else if (e.getSource() == deleteButton) {
+            deleteItem();
+        } else if (e.getSource() == updateButton) {
+            updateItem();
+        } else if (e.getSource() == reportButton) {
+            showReport();
+        }else if (e.getSource() == backButton) {
+            goBack();
+        }
+    }
+
+    private void addItem() {
+        // Add item to the table
+        String id = txtId.getText();
+        String itemName = txtItemName.getText();
+        String desc = txtDesc.getText();
+        double cost = 0.0;
+        double sell = 0.0;
+        double stock = 0.0;
+
+        try {
+            cost = Double.parseDouble(txtCost.getText());
+            sell = cost + (cost * 0.5);
+            stock = Double.parseDouble(txtStock.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter valid numbers for Cost, Sell Price and Stock!");
+            return; // Exit the method if parsing fails
+        }
+
+        Object[] row = {id, itemName, desc, cost, sell, stock};
+        tableModel.addRow(row);
+
+        // Clear input fields
+        clearInputFields();
+    }
+
+    private void deleteItem() {
+        // Delete the selected item from table
+        int selectedRow = inventoryTable.getSelectedRow();
+        if (selectedRow != -1) {
+            tableModel.removeRow(selectedRow);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+        }
+    }
+
+    private void updateItem() {
+        // Update selected item in table
+        int selectedRow = inventoryTable.getSelectedRow();
+        if (selectedRow != -1) {
+            try {
+                String id = txtId.getText();
+                String itemName = txtItemName.getText();
+                String desc = txtDesc.getText();
+                double cost = Double.parseDouble(txtCost.getText());
+                double sell = cost + (cost * 0.5);
+                double stock = Double.parseDouble(txtStock.getText());
+
+                tableModel.setValueAt(id, selectedRow, 0);
+                tableModel.setValueAt(itemName, selectedRow, 1);
+                tableModel.setValueAt(desc, selectedRow, 2);
+                tableModel.setValueAt(cost, selectedRow, 3);
+                tableModel.setValueAt(sell, selectedRow, 4);
+                tableModel.setValueAt(stock, selectedRow, 5);
+
+                // Clear input fields
+                clearInputFields();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Please enter valid numbers for Cost, Sell Price and Stock!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a row to update.");
+        }
+    }
+
+    
+
+    private void showReport() {
+        // Create a new frame or dialog to show the report in a formatted table
+        JFrame reportFrame = new JFrame("Inventory Report");
+        reportFrame.setSize(600, 400);
+        reportFrame.setLocationRelativeTo(this);
+
+        JPanel reportPanel = new JPanel(new BorderLayout());
+        reportPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Calculate total stock and number of items
+        double totalStock = 0;
+        int numberOfItems = tableModel.getRowCount();
+
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            double stock = (double) tableModel.getValueAt(i, 5);
+            totalStock += stock;
+        }
+
+        // Add total stock and number of items to the panel
+        JLabel totalStockLabel = new JLabel("Total Stock: " + totalStock);
+        JLabel numberOfItemsLabel = new JLabel("Number of Items: " + numberOfItems);
+
+        JPanel summaryPanel = new JPanel(new GridLayout(2, 1));
+        summaryPanel.add(totalStockLabel);
+        summaryPanel.add(numberOfItemsLabel);
+
+        // Table for displaying report
+        JTable reportTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(reportTable);
+        reportPanel.add(scrollPane, BorderLayout.CENTER);
+        reportPanel.add(summaryPanel, BorderLayout.SOUTH);
+
+        // Add the report panel to the frame
+        reportFrame.add(reportPanel);
+        reportFrame.setVisible(true);
+    }
+    
+    // Method to get inventory report
+    public String getInventoryReport() {
+        StringBuilder report = new StringBuilder();
+        report.append("Inventory Report:\n");
+        report.append("---------------------------------------------------\n");
+        report.append(String.format("%-10s %-15s %-20s %-10s %-15s %-10s\n", "PRODUCT ID", "ITEM NAME", "DESCRIPTION", "COST (RM)", "SELL PRICE (RM)", "STOCK"));
+        report.append("---------------------------------------------------\n");
+
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            String id = (String) tableModel.getValueAt(i, 0);
+            String itemName = (String) tableModel.getValueAt(i, 1);
+            String desc = (String) tableModel.getValueAt(i, 2);
+            double cost = (double) tableModel.getValueAt(i, 3);
+            double sell = (double) tableModel.getValueAt(i, 4);
+            double stock = (double) tableModel.getValueAt(i, 5);
+
+            report.append(String.format("%-10s %-15s %-20s %-10.2f %-15.2f %-10.2f\n", id, itemName, desc, cost, sell, stock));
+        }
+
+        return report.toString();
+    }
+
+    private void clearInputFields() {
+        txtId.setText("");
+        txtItemName.setText("");
+        txtDesc.setText("");
+        txtCost.setText("");
+        txtStock.setText("");
+    }
+    private void goBack() {
+        // Logic for back button, if any
+        dispose();
+        new MainMenu(); 
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(InventoryManagement::new);
+    }
+
+}
+
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class OrderManagement extends JFrame implements ActionListener {
+    private JTextField txtPrice, txtSupp, txtFee, txtQty;
+    private JButton addButton, updateButton, invoiceButton, deleteButton, backButton, reportButton;
+    private DefaultTableModel tableModel;
+    private JTable inventoryTable;
+    private JCheckBox tshirtCheckBox, pantsCheckBox, bagCheckBox, shoesCheckBox, capCheckBox, hoodieCheckBox, sweatshirtCheckBox, randomCheckBox;
+    private JRadioButton pendingRadioButton, processedRadioButton, shippedRadioButton;
+    private ButtonGroup orderStatusGroup;
+
+    public OrderManagement() {
+        // Setup GUI components
+        setTitle("Order Management");
+        setSize(980, 480);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        // Labels and text fields
+        JLabel qtyLabel = new JLabel("QUANTITY :");
+        JLabel priceLabel = new JLabel("PRICE (RM):");
+        JLabel suppLabel = new JLabel("SUPPLIER :");
+        JLabel feeLabel = new JLabel("SHIPPING FEE :");
+
+        txtSupp = new JTextField(10);
+        txtPrice = new JTextField(10);
+        txtQty = new JTextField(10);
+        txtFee = new JTextField(10);
+
+        // Set up buttons
+        addButton = new JButton("ADD ORDER");
+        updateButton = new JButton("UPDATE ORDER");
+        invoiceButton = new JButton("PRINT INVOICE");
+        deleteButton = new JButton("DELETE ORDER");
+        backButton = new JButton("BACK");
+        reportButton = new JButton("GENERATE REPORT");
+
+        // Add Action Listeners
+        addButton.addActionListener(this);
+        updateButton.addActionListener(this);
+        invoiceButton.addActionListener(this);
+        deleteButton.addActionListener(this);
+        backButton.addActionListener(this);
+        reportButton.addActionListener(this);
+
+        // Panel for buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(addButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(invoiceButton);
+        buttonPanel.add(reportButton);
+        buttonPanel.add(backButton);
+
+        // Radio buttons for order status
+        pendingRadioButton = new JRadioButton("Pending");
+        processedRadioButton = new JRadioButton("Processed");
+        shippedRadioButton = new JRadioButton("Shipped");
+
+        // Button group for radio buttons
+        orderStatusGroup = new ButtonGroup();
+        orderStatusGroup.add(pendingRadioButton);
+        orderStatusGroup.add(processedRadioButton);
+        orderStatusGroup.add(shippedRadioButton);
+
+        // Panel for radio buttons
+        JPanel radioButtonPanel = new JPanel(new GridLayout(3, 1));
+        radioButtonPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("ORDER STATUS"),
+                BorderFactory.createEmptyBorder(15, 15, 15, 2))); // Titled border with space
+
+        radioButtonPanel.add(pendingRadioButton);
+        radioButtonPanel.add(processedRadioButton);
+        radioButtonPanel.add(shippedRadioButton);
+
+        // Checkboxes for product categories
+        tshirtCheckBox = new JCheckBox("Tshirt");
+        pantsCheckBox = new JCheckBox("Pants");
+        bagCheckBox = new JCheckBox("Bag");
+        shoesCheckBox = new JCheckBox("Shoes");
+        capCheckBox = new JCheckBox("Cap");
+        hoodieCheckBox = new JCheckBox("Hoodie");
+        sweatshirtCheckBox = new JCheckBox("Sweatshirt");
+        randomCheckBox = new JCheckBox("Random");
+
+        // Panel for checkboxes
+        JPanel checkBoxPanel = new JPanel(new GridLayout(3, 3));
+        checkBoxPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("TYPE OF BALE"),
+                BorderFactory.createEmptyBorder(15, 15, 15, 2))); // Titled border with space
+
+        checkBoxPanel.add(tshirtCheckBox);
+        checkBoxPanel.add(pantsCheckBox);
+        checkBoxPanel.add(bagCheckBox);
+        checkBoxPanel.add(hoodieCheckBox);
+        checkBoxPanel.add(shoesCheckBox);
+        checkBoxPanel.add(capCheckBox);
+        checkBoxPanel.add(sweatshirtCheckBox);
+        checkBoxPanel.add(randomCheckBox);
+
+        // Input panel with 4 rows and 2 columns
+        JPanel inputPanel = new JPanel(new GridBagLayout());
+        inputPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("SUPPLIER NEW ORDER"),
+                BorderFactory.createEmptyBorder(5, 15, 15, 2))); // Titled border with space
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(3, 3, 3, 3); // Padding between components
+        gbc.fill = GridBagConstraints.HORIZONTAL;  
+
+        // Row 1 - Supplier Label and Text Field
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        inputPanel.add(suppLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        inputPanel.add(txtSupp, gbc);
+
+        // Row 2 - Price Label and Text Field
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        inputPanel.add(priceLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        inputPanel.add(txtPrice, gbc);
+
+        // Row 3 - Quantity Label and Text Field
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        inputPanel.add(qtyLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        inputPanel.add(txtQty, gbc);
+
+        // Row 4 - Shipping Fee Label and Text Field
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        inputPanel.add(feeLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        inputPanel.add(txtFee, gbc);
+
+        // Panel to combine input, checkboxes, and radio buttons
+        JPanel westPanel = new JPanel();
+        westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
+        westPanel.add(inputPanel);
+        westPanel.add(checkBoxPanel);
+        westPanel.add(radioButtonPanel);
+
+        // Table setup
+        String[] columnNames = {"TYPE OF BALE", "SUPPLIER", "QUANTITY", "PRICE (RM)", "SHIPPING FEE", "TOTAL (RM)", "STATUS"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        inventoryTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(inventoryTable);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add space around the table
+
+        // Create DISPLAY ORDER panel
+        JPanel displayOrderPanel = new JPanel(new BorderLayout());
+        displayOrderPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("DISPLAY ORDER"),
+                BorderFactory.createEmptyBorder(2, 2, 2, 2))); // Titled border with space
+        displayOrderPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Add components to the frame
+        add(westPanel, BorderLayout.WEST);
+        add(displayOrderPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    private boolean isAnyCheckBoxSelected() {
+        return tshirtCheckBox.isSelected() || pantsCheckBox.isSelected() || bagCheckBox.isSelected() || shoesCheckBox.isSelected() || capCheckBox.isSelected() || hoodieCheckBox.isSelected() || sweatshirtCheckBox.isSelected() || randomCheckBox.isSelected();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == addButton) {
+            addItem();
+        } else if (e.getSource() == updateButton) {
+            updateItem();
+        } else if (e.getSource() == deleteButton) {
+            deleteItem();
+        } else if (e.getSource() == invoiceButton) {
+            invoiceItem();
+        } else if (e.getSource() == reportButton) {
+            generateReport();
+        } else if (e.getSource() == backButton) {
+            goBack();
+        }
+    }
+
+    private double calculateTotal(int qty, double price, double fee) {
+        return (qty * price) + fee;
+    }
+
+    private void addItem() {
+        // Validate that all required fields are filled
+        if (txtSupp.getText().isEmpty() || txtPrice.getText().isEmpty() || txtQty.getText().isEmpty() || txtFee.getText().isEmpty() || !isAnyCheckBoxSelected() || getSelectedStatus().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all required fields and select at least one product type and order status.");
+            return;
+        }
+        // Add item to the table
+        String bale = getSelectedBale();
+        String supp = txtSupp.getText();
+        int qty = 0;
+        double price = 0.0;
+        double ttl = 0.0;
+        double fee = 0.0;
+        String status = getSelectedStatus();
+
+        try {
+            qty = Integer.parseInt(txtQty.getText());
+            price = Double.parseDouble(txtPrice.getText());
+            fee = Double.parseDouble(txtFee.getText());
+            ttl = calculateTotal(qty, price, fee);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter valid numerical values for Quantity, Price, and Shipping Fee.");
+            return;
+        }
+
+        // Add row to table model
+        tableModel.addRow(new Object[]{bale, supp, qty, price, fee, ttl, status});
+
+        // Clear input fields after adding item
+        clearFields();
+    }
+
+    private String getSelectedBale() {
+        StringBuilder sb = new StringBuilder();
+        if (tshirtCheckBox.isSelected()) sb.append("Tshirt, ");
+        if (pantsCheckBox.isSelected()) sb.append("Pants, ");
+        if (bagCheckBox.isSelected()) sb.append("Bag, ");
+        if (shoesCheckBox.isSelected()) sb.append("Shoes, ");
+        if (capCheckBox.isSelected()) sb.append("Cap, ");
+        if (hoodieCheckBox.isSelected()) sb.append("Hoodie, ");
+        if (sweatshirtCheckBox.isSelected()) sb.append("Sweatshirt, ");
+        if (randomCheckBox.isSelected()) sb.append("Random, ");
+
+        // Remove trailing comma and space
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 2);
+        }
+
+        return sb.toString();
+    }
+
+    private String getSelectedStatus() {
+        if (pendingRadioButton.isSelected()) return "Pending";
+        if (processedRadioButton.isSelected()) return "Processed";
+        if (shippedRadioButton.isSelected()) return "Shipped";
+        return "";
+    }
+
+    private void updateItem() {
+        // Get selected row index
+        int selectedRow = inventoryTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select an order to update.");
+            return;
+        }
+
+        // Validate that all required fields are filled
+        if (txtSupp.getText().isEmpty() || txtPrice.getText().isEmpty() || txtQty.getText().isEmpty() || txtFee.getText().isEmpty() || !isAnyCheckBoxSelected() || getSelectedStatus().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all required fields and select at least one product type and order status.");
+            return;
+        }
+
+        // Update item in the table
+        String bale = getSelectedBale();
+        String supp = txtSupp.getText();
+        int qty = 0;
+        double price = 0.0;
+        double ttl = 0.0;
+        double fee = 0.0;
+        String status = getSelectedStatus();
+
+        try {
+            qty = Integer.parseInt(txtQty.getText());
+            price = Double.parseDouble(txtPrice.getText());
+            fee = Double.parseDouble(txtFee.getText());
+            ttl = calculateTotal(qty, price, fee);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter valid numerical values for Quantity, Price, and Shipping Fee.");
+            return;
+        }
+
+        // Update selected row in table model
+        tableModel.setValueAt(bale, selectedRow, 0);
+        tableModel.setValueAt(supp, selectedRow, 1);
+        tableModel.setValueAt(qty, selectedRow, 2);
+        tableModel.setValueAt(price, selectedRow, 3);
+        tableModel.setValueAt(fee, selectedRow, 4);
+        tableModel.setValueAt(ttl, selectedRow, 5);
+        tableModel.setValueAt(status, selectedRow, 6);
+
+        // Clear input fields after updating item
+        clearFields();
+    }
+
+    private void deleteItem() {
+        // Get selected row index
+        int selectedRow = inventoryTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select an order to delete.");
+            return;
+        }
+
+        // Remove selected row from table model
+        tableModel.removeRow(selectedRow);
+
+        // Clear input fields after deleting item
+        clearFields();
+    }
+
+    private void invoiceItem() {
+        if (tableModel.getRowCount() > 0) {
+            StringBuilder invoice = new StringBuilder();
+            invoice.append("================ INVOICE ================\n\n");
+
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                Object bale = tableModel.getValueAt(i, 0);
+                Object supp = tableModel.getValueAt(i, 1);
+                Object qty = tableModel.getValueAt(i, 2);
+                Object price = tableModel.getValueAt(i, 3);
+                Object fee = tableModel.getValueAt(i, 4);
+                Object ttl = tableModel.getValueAt(i, 5);
+                Object status = tableModel.getValueAt(i, 6);
+
+                invoice.append("PRODUCT TYPE: ").append(bale).append("\n")
+                .append("SUPPLIER: ").append(supp).append("\n")
+                .append("QUANTITY: ").append(qty).append("\n")
+                .append("PRICE (RM): ").append(price).append("\n")
+                .append("SHIPPING FEE (RM): ").append(fee).append("\n")
+                .append("TOTAL (RM): ").append(ttl).append("\n")
+                .append("STATUS: ").append(status).append("\n\n")
+                .append("==========================================\n\n");
+            }
+
+            JTextArea invoiceTextArea = new JTextArea(20, 30);
+            invoiceTextArea.setText(invoice.toString());
+
+            JScrollPane scrollPane = new JScrollPane(invoiceTextArea);
+
+            JFrame invoiceFrame = new JFrame("Invoice");
+            invoiceFrame.setSize(400, 400);
+            invoiceFrame.setLocationRelativeTo(null);
+            invoiceFrame.add(scrollPane);
+            invoiceFrame.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "No orders to print an invoice for.");
+        }
+    }
+
+
+    // Method to get order report
+    public String getOrderReport() {
+        StringBuilder report = new StringBuilder();
+        report.append("Order Report:\n");
+        report.append("--------------------------------------------------------------------------\n");
+        report.append(String.format("%-20s %-15s %-10s %-10s %-15s %-10s %-10s\n", "TYPE OF BALE", "SUPPLIER", "QUANTITY", "PRICE (RM)", "SHIPPING FEE (RM)", "TOTAL (RM)", "STATUS"));
+        report.append("--------------------------------------------------------------------------\n");
+
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            String bale = (String) tableModel.getValueAt(i, 0);
+            String supplier = (String) tableModel.getValueAt(i, 1);
+            int quantity = (int) tableModel.getValueAt(i, 2);
+            double price = (double) tableModel.getValueAt(i, 3);
+            double shippingFee = (double) tableModel.getValueAt(i, 4);
+            double total = (double) tableModel.getValueAt(i, 5);
+            String status = (String) tableModel.getValueAt(i, 6);
+
+            report.append(String.format("%-20s %-15s %-10d %-10.2f %-15.2f %-10.2f %-10s\n", bale, supplier, quantity, price, shippingFee, total, status));
+        }
+
+        return report.toString();
+    }
+
+    private void generateReport() {
+        // Create a new frame to show the report in a formatted table
+        JFrame reportFrame = new JFrame("Order Report");
+        reportFrame.setSize(800, 400);
+        reportFrame.setLocationRelativeTo(this);
+
+        JPanel reportPanel = new JPanel(new BorderLayout());
+        reportPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Table for displaying report
+        JTable reportTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(reportTable);
+        reportPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Add the report panel to the frame
+        reportFrame.add(reportPanel);
+        reportFrame.setVisible(true);
+    }
+
+
+    private void goBack() {
+        dispose(); // Close the current frame
+        MainMenu mainMenu = new MainMenu(); // Navigate back to the main menu
+    }
+
+    private void clearFields() {
+        txtSupp.setText("");
+        txtPrice.setText("");
+        txtQty.setText("");
+        txtFee.setText("");
+
+        orderStatusGroup.clearSelection();
+        tshirtCheckBox.setSelected(false);
+        pantsCheckBox.setSelected(false);
+        bagCheckBox.setSelected(false);
+        shoesCheckBox.setSelected(false);
+        capCheckBox.setSelected(false);
+        hoodieCheckBox.setSelected(false);
+        sweatshirtCheckBox.setSelected(false);
+        randomCheckBox.setSelected(false);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new OrderManagement());
+    }
+}
+
+
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
+import java.awt.event.*;
+
+public class SupplierManagement extends JFrame 
+{
+    private JTable SupplierDetailTable;
+    private DefaultTableModel tableModel;
+    private JTextField nameInput, phoneInput, addressInput;
+    private JButton addBtn, deleteBtn,rptBtn, backBtn;
+    private JComboBox<String> OrderTypeComboBox;
+    private int editingRow = -1;
+    
+
+    public SupplierManagement() 
+    {
+        setTitle("Supplier Management");
+        setSize(800, 500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        String[] columns = {"Edit", "Name", "Phone Number", "Address", "Order Type"};
+        tableModel = new DefaultTableModel(columns, 0);
+        SupplierDetailTable = new JTable(tableModel) 
+        {
+            @Override
+            public boolean isCellEditable(int row, int column) 
+            {
+                return column == 0;
+            }
+        };
+
+        SupplierDetailTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        SupplierDetailTable.getColumnModel().getColumn(0).setCellRenderer(new ButtonRenderer());
+        SupplierDetailTable.getColumnModel().getColumn(0).setCellEditor(new ButtonEditor(new JCheckBox()));
+        JScrollPane scrollPane = new JScrollPane(SupplierDetailTable);
+
+        JPanel inputFieldsPanel = new JPanel(new GridLayout(4, 2));
+        nameInput = new JTextField();
+        phoneInput = new JTextField();
+        addressInput = new JTextField();
+        String[] OrderTypes = {"Choose Your Type", "Tshirt", "Pants", "Bag", "Shoes", "Cap", "Hoodie", "Sweatshirt", "Random"};
+        OrderTypeComboBox = new JComboBox<>(OrderTypes);
+        OrderTypeComboBox.setSelectedIndex(0);
+        OrderTypeComboBox.setForeground(Color.GRAY);
+        OrderTypeComboBox.addActionListener(e -> {
+                    if (OrderTypeComboBox.getSelectedIndex() == 0) 
+                    {
+                        OrderTypeComboBox.setForeground(Color.GRAY);
+                    } else {
+                        OrderTypeComboBox.setForeground(Color.BLACK);
+                    }
+            });
+
+        setPlaceholderText(nameInput, "Put Your Name");
+        setPlaceholderText(phoneInput, "###-### ####");
+        setPlaceholderText(addressInput, "Building Number, Building Name, District, State, Zip Code");
+
+        phoneInput.getDocument().addDocumentListener(new DocumentListener() 
+            {
+                @Override
+                public void insertUpdate(DocumentEvent e) 
+                {
+                    if (phoneInput.getText().length() > 11) 
+                    {
+                        phoneInput.setText(phoneInput.getText().substring(0, 11));
+                    }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {}
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {}
+            });
+
+        inputFieldsPanel.add(new JLabel("Name:"));
+        inputFieldsPanel.add(nameInput);
+        inputFieldsPanel.add(new JLabel("Phone Number:"));
+        inputFieldsPanel.add(phoneInput);
+        inputFieldsPanel.add(new JLabel("Address:"));
+        inputFieldsPanel.add(addressInput);
+        inputFieldsPanel.add(new JLabel("Order Type:"));
+        inputFieldsPanel.add(OrderTypeComboBox);
+
+        JPanel buttonsPanel = new JPanel(new GridLayout(1, 3));
+        addBtn = new JButton("Add Supplier Detail");
+        addBtn.setBackground(Color.GREEN);
+        addBtn.addActionListener(e -> {
+                    if (editingRow == -1) {
+                        addNewSupplierDetail();
+                    } else {
+                        updateSupplierDetail();
+                    }
+            });
+        buttonsPanel.add(addBtn);
+
+        deleteBtn = new JButton("Delete Supplier Detail");
+        deleteBtn.setBackground(Color.RED);
+        deleteBtn.addActionListener(e -> deleteSelectedSupplierDetail());
+        buttonsPanel.add(deleteBtn);
+        
+        rptBtn = new JButton("Generate Report");
+        rptBtn.setBackground(Color.YELLOW);
+        rptBtn.addActionListener(e -> generateReport());
+        buttonsPanel.add(rptBtn);
+
+        backBtn = new JButton("Back");
+        backBtn.setBackground(Color.CYAN);
+        backBtn.addActionListener(e -> handleBackAction());
+        buttonsPanel.add(backBtn);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(inputFieldsPanel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(buttonsPanel, BorderLayout.SOUTH);
+
+        add(mainPanel);
+        setVisible(true);
+    }
+
+    private void setPlaceholderText(JTextField textField, String placeholder) 
+    {
+        textField.setText(placeholder);
+        textField.setForeground(Color.GRAY);
+        textField.addFocusListener(new FocusAdapter() 
+            {
+                @Override
+                public void focusGained(FocusEvent e)
+                {
+                    if (textField.getText().equals(placeholder)) 
+                    {
+                        textField.setText("");
+                        textField.setForeground(Color.BLACK);
+                    }
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) 
+                {
+                    if (textField.getText().isEmpty()) 
+                    {
+                        textField.setForeground(Color.GRAY);
+                        textField.setText(placeholder);
+                    }
+                }
+            });
+    }
+
+    private void addNewSupplierDetail() 
+    {
+        String name = nameInput.getText(), phone = phoneInput.getText(), address = addressInput.getText(), SupplierDetailType = (String)OrderTypeComboBox.getSelectedItem();
+        if (validateInput(name, phone, address, SupplierDetailType)) 
+        {
+            Supplier newSupplier = new Supplier(name, phone, address, SupplierDetailType);
+            tableModel.addRow(new Object[]{"Edit", name, phone, address, SupplierDetailType});
+            clearInputFields();
+        } else {
+            JOptionPane.showMessageDialog(this, "Please fill in all fields correctly.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateSupplierDetail() 
+    {
+        String name = nameInput.getText(), phone = phoneInput.getText(), address = addressInput.getText(), SupplierDetailType = (String) OrderTypeComboBox.getSelectedItem();
+        if (validateInput(name, phone, address, SupplierDetailType)) 
+        {
+            Supplier updatedSupplier = new Supplier(name, phone, address, SupplierDetailType);
+            tableModel.setValueAt(name, editingRow, 1);
+            tableModel.setValueAt(phone, editingRow, 2);
+            tableModel.setValueAt(address, editingRow, 3);
+            tableModel.setValueAt(SupplierDetailType, editingRow, 4);
+            clearInputFields();
+            editingRow = -1;
+        } else {
+            JOptionPane.showMessageDialog(this, "Please fill in all fields correctly.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void deleteSelectedSupplierDetail() 
+    {
+        int selectedIndex = SupplierDetailTable.getSelectedRow();
+        if (selectedIndex != -1) 
+
+        {
+            tableModel.removeRow(selectedIndex);
+        } else {
+            JOptionPane.showMessageDialog(this, "No Supplier Detail selected.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void clearInputFields() 
+    {
+        resetPlaceholderText(nameInput, "Put Your Name");
+        resetPlaceholderText(phoneInput, "###-### ####");
+        resetPlaceholderText(addressInput, "Building Number, Building Name, District, State, Zip Code");
+        OrderTypeComboBox.setSelectedIndex(0);
+    }
+
+    private void handleBackAction() 
+    {
+        dispose();
+        new MainMenu();
+
+    }
+    
+
+    private void resetPlaceholderText(JTextField textField, String placeholder)
+    {
+        textField.setText(placeholder);
+        textField.setForeground(Color.GRAY);
+    }
+
+    private boolean validateInput(String name, String phone, String address, String SupplierDetailType) 
+    {
+        return !name.isEmpty() && !phone.isEmpty() && !address.isEmpty() &&
+        !name.equals("Put Your Name") && !phone.equals("###-### ####") &&
+        !address.equals("Building Number, Building Name, District, State, Zip Code") &&
+        !SupplierDetailType.equals("Choose Your Type");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(SupplierManagement::new);
+    }
+    
+    private void generateReport() {
+        JFrame reportFrame = new JFrame("Supplier Report");
+        reportFrame.setSize(600, 400);
+        reportFrame.setLocationRelativeTo(this);
+
+        JPanel reportPanel = new JPanel(new BorderLayout());
+        reportPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        StringBuilder report = new StringBuilder();
+        report.append("Supplier Report:\n");
+        report.append("------------------------------------------------------------------------------------------------------\n");
+        report.append(String.format("%-15s %-15s %-20s %-15s\n", "Name","Phone Number","Address","Order Type"));
+        report.append("------------------------------------------------------------------------------------------------------\n");
+
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            String name = (String) tableModel.getValueAt(i, 1);
+            String phone = (String) tableModel.getValueAt(i, 2);
+            String address = (String) tableModel.getValueAt(i, 3);
+            String OrderType = (String) tableModel.getValueAt(i, 4);
+
+            report.append(String.format("%-15s %-15s %-20s %-15s\n", name, phone, address, OrderType));
+        }
+
+        JTextArea reportArea = new JTextArea(report.toString());
+        reportArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(reportArea);
+        reportPanel.add(scrollPane, BorderLayout.CENTER);
+
+        reportFrame.add(reportPanel);
+        reportFrame.setVisible(true);
+    }
+    
+    private String getSupplierReport() 
+    {
+        StringBuilder report = new StringBuilder();
+        report.append("Supplier Report:\n");
+        report.append("------------------------------------------------------------------------------------------------------\n");
+        report.append(String.format("%-15s %-15s %-20s %-15s\n", "Name", "Phone Number", "Address", "Order Type"));
+        report.append("------------------------------------------------------------------------------------------------------\n");
+
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            String name = (String) tableModel.getValueAt(i, 1);
+            String phone = (String) tableModel.getValueAt(i, 2);
+            String address = (String) tableModel.getValueAt(i, 3);
+            String OrderType = (String) tableModel.getValueAt(i, 4);
+
+            report.append(String.format("%-15s %-15s %-20s %-15s\n", name, phone, address, OrderType));
+        }
+
+        return report.toString();
+    }
+
+    class Supplier 
+    {
+        private String name, phone, address, OrderType;
+
+        public Supplier(String name, String phone, String address, String SupplierDetailType) 
+        {
+            this.name = name;
+            this.phone = phone;
+            this.address = address;
+            this.OrderType = OrderType;
+        }
+
+        @Override
+        public String toString() 
+        {
+            return "Name: " + name + ", Phone: " + phone + ", Address: " + address + ", SupplierDetail Type: " + OrderType;
+        }
+    }
+
+    class ButtonRenderer extends JButton implements TableCellRenderer 
+    {
+        public ButtonRenderer()
+        {
+            setOpaque(true);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            setText((value == null) ? "Edit" : value.toString());
+            return this;
+        }
+    }
+
+    class ButtonEditor extends DefaultCellEditor 
+    {
+        private String label;
+
+        public ButtonEditor(JCheckBox checkBox) 
+        {
+            super(checkBox);
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) 
+        {
+            label = (value == null) ? "Edit" : value.toString();
+            JButton button = new JButton(label);
+            button.setOpaque(true);
+            button.addActionListener(e -> {
+                        fireEditingStopped();
+                        editSupplierDetail(row);
+                });
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() 
+        {
+            return label;
+        }
+
+        @Override
+        public boolean stopCellEditing() 
+        {
+            return super.stopCellEditing();
+        }
+
+        private void editSupplierDetail(int row) 
+        {
+            String name = (String) tableModel.getValueAt(row, 1);
+            String phone = (String) tableModel.getValueAt(row, 2);
+            String address = (String) tableModel.getValueAt(row, 3);
+            String SupplierDetailType = (String) tableModel.getValueAt(row, 4);
+
+            nameInput.setText(name);
+            phoneInput.setText(phone);
+            addressInput.setText(address);
+            OrderTypeComboBox.setSelectedItem(SupplierDetailType);
+
+            editingRow = row;
+        }
+
+    }
+}
+
